@@ -34,10 +34,6 @@ class ItemTableViewController: UITableViewController {
   //MARK: - Tableview Delegate Methods
   
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    
-    context.delete(itemArray[indexPath.row])
-    itemArray.remove(at: indexPath.row)
-    
     tableView.deselectRow(at: indexPath, animated: true)
     
     saveItems()
@@ -97,6 +93,25 @@ class ItemTableViewController: UITableViewController {
       print("Error fetching data from context \(error)")
     }
   }
+  
+  //MARK: - Swipe Action Methods
+  
+  override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { (action, view, completion) in
+      self.context.delete(self.itemArray[indexPath.row])
+      self.itemArray.remove(at: indexPath.row)
+      self.saveItems()
+      tableView.deleteRows(at: [indexPath], with: .automatic)
+      completion(true)
+    }
+    
+    deleteAction.backgroundColor = .red
+    
+    let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
+    
+    return configuration
+  }
 }
+
 
 
